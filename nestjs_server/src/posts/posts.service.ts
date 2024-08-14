@@ -95,14 +95,15 @@ export class PostsService {
     return newPost;
   }
 
-  deletePost(postId: Number) {
-    const post = posts.find((post) => post.id === postId);
+  async deletePost(postId: number) {
+    const post = await this.postsRepository.findOne({ where: { id: postId } });
 
     if (!post) {
       throw new NotFoundException();
     }
-    posts = posts.filter((post) => post.id !== postId);
 
-    return postId;
+    const deletePost = await this.postsRepository.delete(postId);
+
+    return deletePost;
   }
 }
