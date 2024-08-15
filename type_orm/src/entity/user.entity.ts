@@ -9,6 +9,12 @@ import {
   VersionColumn,
 } from 'typeorm';
 
+// 특정값 제한
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
 @Entity()
 export class UserModel {
   // ID
@@ -49,9 +55,16 @@ export class UserModel {
     // 아무것도 입력 안했을 때 들어가는 값
     default: 'default value',
     // 칼럼 중 유일무이한 값이 돼야 하는지 ex) 이메일 ..
-    unique: true,
+    unique: false,
   })
   title: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   // 데이터 생성일자
   // 데이터가 생성되는 날짜와 시간이 자동으로 찍힘
