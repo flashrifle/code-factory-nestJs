@@ -4,6 +4,7 @@ import {
   Entity,
   Generated,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryColumn,
@@ -13,6 +14,7 @@ import {
 } from 'typeorm';
 import { ProfileModel } from './profile.entity';
 import { PostModel } from './post.entity';
+import { TagModel } from './tag.entity';
 
 // 특정값 제한
 export enum Role {
