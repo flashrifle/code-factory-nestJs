@@ -22,10 +22,36 @@ export class AppController {
   @Get('users')
   getUsers() {
     return this.userRepository.find({
-      // relations: ['profile', 'posts'],
-      //   relations: {
-      //     profile: true,
-      //   },
+      // 어떤 프로퍼티를 선택할지
+      // select 를 정의하지 않으면 모든 프로퍼티를 가져옴
+      // select 를 정의하면 정의된 프로퍼티만 가져옴
+      select: {
+        id: true,
+        createAt: true,
+        updateAt: true,
+        version: true,
+      },
+      // 필터링할 조건을 입력
+      // { id: 조건, name: 조건 } => AND
+      // [{} , {}] => OR
+      where: {
+        // profile: {
+        //   id: 3,
+        // },
+      },
+      // 관계를 가져오는 법
+      relations: ['profile'],
+      // relations: {
+      //   profile: true,
+      // },
+      // 오름차 ASC 내림차 DESC
+      order: {
+        id: 'asc',
+      },
+      // 처음 몇개를 제외할지
+      skip: 0,
+      // 처음부터 몇개를 가져올지
+      take: 1,
     });
   }
 
@@ -44,6 +70,7 @@ export class AppController {
 
     return this.userRepository.save({
       ...user,
+      email: user.email + 0,
     });
   }
   @Delete('user/profile/:id')
