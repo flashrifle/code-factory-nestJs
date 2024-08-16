@@ -77,14 +77,94 @@ export class AppController {
       //   profile: true,
       // },
       // 오름차 ASC 내림차 DESC
-      // order: {
-      //   id: 'asc',
-      // },
+      order: {
+        id: 'ASC',
+      },
       // 처음 몇개를 제외할지
       // skip: 0,
       // 처음부터 몇개를 가져올지
       // take: 1,
     });
+  }
+
+  @Post('sample')
+  async sample() {
+    // 모델에 해당되는 객체 생성 - 저장은 X
+    // new UserModel({email : '123124@asdf.com'})
+    // const user1 = await this.userRepository.create({
+    //   email: 'test@test.com',
+    // });
+
+    // DB 저장
+    // const user2 = await this.userRepository.save({
+    //   email: 'test@test.com',
+    // });
+
+    // preload
+    // 입력된 값을 기반으로 데이터베이스에 있는 데이터를 불러오고
+    // 추가 입력된 값으로 데이터 베이스에서 가져온 값들을 대체
+    // 저장하지는 않음
+    // const user3 = await this.userRepository.preload({
+    //   id: 101,
+    //   email: 'example@example.com',
+    // });
+
+    // 삭제하기
+    // await this.userRepository.delete(101);
+
+    // 숫자 증가
+    // await this.userRepository.increment(
+    //   {
+    //     id: 2,
+    //   },
+    //   'count',
+    //   2,
+    // );
+
+    // 숫자 감소
+    // await this.userRepository.decrement(
+    //   {
+    //     id: 2,
+    //   },
+    //   'count',
+    //   2,
+    // );
+
+    // 갯수 카운팅
+    // const count = await this.userRepository.count({
+    //   where: {
+    //     email: ILike('%0%'),
+    //   },
+    // });
+
+    // sum
+    // const sum = await this.userRepository.sum('count', {
+    //   email: ILike('%0%'),
+    // });
+
+    // average
+    // const average = await this.userRepository.average('count', {
+    //   id: LessThan(5),
+    // });
+
+    // 최소값
+    // const min = await this.userRepository.minimum('count', {
+    //   id: LessThan(5),
+    // });
+
+    // 최대 값
+    // const max = await this.userRepository.maximum('count', {
+    //   id: LessThan(5),
+    // });
+
+    // const user = await this.userRepository.find({})
+
+    // const userOne = await this.userRepository.findOne({ where: { id: 3 } });
+
+    // const usersAndCount = await this.userRepository.findAndCount({
+    //   take: 3,
+    // });
+    return true;
   }
 
   @Post('users')
