@@ -20,19 +20,14 @@ export class PostsController {
 
   // 3) POST /posts 게시물을 변경한다
   @Post('')
-  postPost(@Body('author') author: string, @Body('title') title: string, @Body('content') content: string) {
-    return this.postsService.createPost(author, title, content);
+  postPost(@Body('authorId') authorId: number, @Body('title') title: string, @Body('content') content: string) {
+    return this.postsService.createPost(authorId, title, content);
   }
 
   // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다
   @Put(':id')
-  putPost(
-    @Param('id') id: string,
-    @Body('author') author?: string,
-    @Body('title') title?: string,
-    @Body('content') content?: string,
-  ) {
-    return this.postsService.updatePost(+id, author, title, content);
+  putPost(@Param('id') id: string, @Body('title') title?: string, @Body('content') content?: string) {
+    return this.postsService.updatePost(+id, title, content);
   }
 
   // 5) DELETE /posts/:id id에 해당하는 개시물을 삭제
