@@ -31,6 +31,22 @@ export class AuthService {
    */
 
   /*
+    Header 로 부터 토큰을 받을 때
+    {authorization: 'Basic {token}'}
+    {authorization: 'Bearer {token}'}
+   */
+  async extractTokenFromHeader(header: string, isBearer: boolean) {
+    const splitToken = header.split(' ');
+
+    const prefix = isBearer ? 'Bearer' : 'Basic';
+
+    if (splitToken.length !== 2 || splitToken[0] !== prefix) {
+      throw new UnauthorizedException('잘못된 토큰 입니다.');
+    }
+    const token = splitToken[1];
+  }
+
+  /*
         1. registerWithEmail
             - email, nickname, password 를 입력받고 사용자 생성
             - 생성이 완료되면 AT, RT 를 반환
