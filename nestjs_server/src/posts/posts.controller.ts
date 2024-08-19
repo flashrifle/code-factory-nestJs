@@ -31,12 +31,7 @@ export class PostsController {
 
   // 3) POST /posts 게시물을 변경한다
   @Post('')
-  postPost(
-    @Body('authorId') authorId: number,
-    @Body('title') title: string,
-    @Body('content') content: string,
-    @Body('isPublic', new DefaultValuePipe(true)) isPublic: boolean,
-  ) {
+  postPost(@Body('authorId') authorId: number, @Body('title') title: string, @Body('content') content: string) {
     return this.postsService.createPost(authorId, title, content);
   }
 
