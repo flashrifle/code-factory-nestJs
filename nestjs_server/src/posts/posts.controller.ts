@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -20,7 +31,12 @@ export class PostsController {
 
   // 3) POST /posts 게시물을 변경한다
   @Post('')
-  postPost(@Body('authorId') authorId: number, @Body('title') title: string, @Body('content') content: string) {
+  postPost(
+    @Body('authorId') authorId: number,
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @Body('isPublic', new DefaultValuePipe(true)) isPublic: boolean,
+  ) {
     return this.postsService.createPost(authorId, title, content);
   }
 
