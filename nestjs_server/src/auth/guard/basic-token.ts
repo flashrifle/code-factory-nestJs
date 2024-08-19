@@ -22,7 +22,8 @@ export class BasicTokenGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
 
     // {authorization: 'Basic asdfasdfasdf')
-    const rawToken = req.header['authorization'];
+    const rawToken = req.headers['authorization'];
+
     if (!rawToken) {
       throw new UnauthorizedException('토큰이 없습니다.');
     }
