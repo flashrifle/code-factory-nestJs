@@ -45,8 +45,8 @@ export class PostsController {
 
   // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다
   @Put(':id')
-  putPost(@Param('id', ParseIntPipe) id: number, @Body('title') title?: string, @Body('content') content?: string) {
-    return this.postsService.updatePost(id, title, content);
+  putPost(@Param('id', ParseIntPipe) id: number, @Body() body: CreatePostDto) {
+    return this.postsService.updatePost(id, body);
   }
 
   // 5) DELETE /posts/:id id에 해당하는 개시물을 삭제
