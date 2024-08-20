@@ -14,6 +14,8 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
+import { UsersModel } from '../users/entities/users.entity';
+import { User } from '../users/decorator/user.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -35,9 +37,8 @@ export class PostsController {
   // 3) POST /posts 게시물을 생성
   @Post('')
   @UseGuards(AccessTokenGuard)
-  postPost(@Request() req: any, @Body('title') title: string, @Body('content') content: string) {
-    const authorId = req.user.id;
-    return this.postsService.createPost(authorId, title, content);
+  postPost(@User() user: UsersModel, @Body('title') title: string, @Body('content') content: string) {
+    return this.postsService.createPost(user.id, title, content);
   }
 
   // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다
