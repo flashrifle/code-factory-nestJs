@@ -16,6 +16,7 @@ import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
 import { UsersModel } from '../users/entities/users.entity';
 import { User } from '../users/decorator/user.decorator';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -35,10 +36,11 @@ export class PostsController {
   }
 
   // 3) POST /posts 게시물을 생성
-  @Post('')
+  // DTO - Data Transfer Object
+  @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(@User('id') userId: number, @Body('title') title: string, @Body('content') content: string) {
-    return this.postsService.createPost(userId, title, content);
+  postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
+    return this.postsService.createPost(userId, body);
   }
 
   // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다

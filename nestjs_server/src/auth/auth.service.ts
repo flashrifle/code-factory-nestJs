@@ -139,7 +139,7 @@ export class AuthService {
   loginUser(user: Pick<UsersModel, 'email' | 'id'>) {
     return {
       accessToken: this.signToken(user, false),
-      refresh: this.signToken(user, true),
+      refreshToken: this.signToken(user, true),
     };
   }
 
