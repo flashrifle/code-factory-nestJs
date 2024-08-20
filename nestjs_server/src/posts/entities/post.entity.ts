@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 import { UsersModel } from '../../users/entities/users.entity';
 import { BaseModel } from '../../common/entity/base.entity';
 import { IsString } from 'class-validator';
+import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
 
 @Entity()
 export class PostsModel extends BaseModel {
@@ -13,10 +14,10 @@ export class PostsModel extends BaseModel {
   author: UsersModel;
 
   @IsString({
-    message: 'title은 string타입을 입력해야합니다.',
+    message: stringValidationMessage,
   })
   @IsString({
-    message: 'content는 string타입을 입력해야합니다.',
+    message: stringValidationMessage,
   })
   @Column()
   title: string;
