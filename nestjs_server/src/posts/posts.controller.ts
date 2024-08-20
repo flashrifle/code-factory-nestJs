@@ -11,6 +11,7 @@ import {
   Put,
   UseGuards,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
@@ -43,9 +44,9 @@ export class PostsController {
     return this.postsService.createPost(userId, body);
   }
 
-  // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다
-  @Put(':id')
-  putPost(@Param('id', ParseIntPipe) id: number, @Body() body: CreatePostDto) {
+  // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
+  @Patch(':id')
+  patchPost(@Param('id', ParseIntPipe) id: number, @Body() body: CreatePostDto) {
     return this.postsService.updatePost(id, body);
   }
 
