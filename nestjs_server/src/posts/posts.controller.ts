@@ -37,8 +37,8 @@ export class PostsController {
   // 3) POST /posts 게시물을 생성
   @Post('')
   @UseGuards(AccessTokenGuard)
-  postPost(@User() user: UsersModel, @Body('title') title: string, @Body('content') content: string) {
-    return this.postsService.createPost(user.id, title, content);
+  postPost(@User('id') userId: number, @Body('title') title: string, @Body('content') content: string) {
+    return this.postsService.createPost(userId, title, content);
   }
 
   // 4) PUT /posts/:id id에 해당하는 개시물을 변경한다
