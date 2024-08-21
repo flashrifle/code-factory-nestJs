@@ -42,7 +42,21 @@ export class UsersModel extends BaseModel {
   @Length(3, 8, {
     message: lengthValidationMessage,
   })
-  @Exclude()
+  /*
+      Request
+      frontend -> backend
+      plain object (JSON) -> class instance (dto)
+
+      Response
+      backend -> frontend
+      class instance -> plain object (JSON)
+
+      toClassOnly -> class instance로 변환될 때만
+      toPlainOnly -> plain object로 변환될 때만
+   */
+  @Exclude({
+    toPlainOnly: true,
+  })
   password: string;
 
   @Column({
