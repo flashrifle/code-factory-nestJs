@@ -1,4 +1,5 @@
 import { IsIn, IsNumber, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class PaginatePostDto {
   // 이전 마지막 데이터의 ID
