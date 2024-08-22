@@ -27,6 +27,17 @@ export class PostsService {
     });
   }
 
+  async generatePost(userId: number) {
+    {
+      for (let i = 0; i < 100; i++) {
+        await this.createPost(userId, {
+          title: `임의로 생성된 제목 ${i}`,
+          content: `임의로 생성된 콘텐츠 ${i}`,
+        });
+      }
+    }
+  }
+
   // 오름차 순으로 정렬하는 페이지네이션만 구현한다.
   async paginatePosts(dto: PaginatePostDto) {
     const posts = await this.postsRepository.find({

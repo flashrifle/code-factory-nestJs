@@ -38,6 +38,13 @@ export class PostsController {
     return this.postsService.getPostById(id);
   }
 
+  @Post('random')
+  @UseGuards(AccessTokenGuard)
+  async postPostRandom(@User() user: UsersModel) {
+    await this.postsService.generatePost(user.id);
+    return true;
+  }
+
   // 3) POST /posts 게시물을 생성
   // DTO - Data Transfer Object
   @Post()
