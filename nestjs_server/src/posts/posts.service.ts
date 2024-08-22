@@ -42,13 +42,31 @@ export class PostsService {
   // 오름차 순으로 정렬하는 페이지네이션만 구현한다.
   async paginatePosts(dto: PaginatePostDto) {
     if (dto.page) {
-      return this.pagePaginatePosts();
+      return this.pagePaginatePosts(dto);
     } else {
       return this.cursorPaginatePosts(dto);
     }
   }
 
-  async pagePaginatePosts(dto: PaginatePostDto) {}
+  async pagePaginatePosts(dto: PaginatePostDto) {
+    /*
+    data: Data[],
+    total: number,
+
+    [1],[2],[3],[4]
+     */
+    const posts = await this.postsRepository.find({
+      skip: dto.take * (dto.page - 1),
+      take: dto.take,
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+    });
+
+    return {
+      data: posts,
+    };
+  }
 
   async cursorPaginatePosts(dto: PaginatePostDto) {
     const where: FindOptionsWhere<PostsModel> = {};
