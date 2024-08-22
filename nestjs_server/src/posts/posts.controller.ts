@@ -28,7 +28,7 @@ export class PostsController {
   // 1) GET /posts 모든 게시물을 가져온다
   @Get()
   getPosts(@Query() query: PaginatePostDto) {
-    return this.postsService.getAllPosts();
+    return this.postsService.paginatePosts(query);
   }
 
   // 2) GET /posts/:id
