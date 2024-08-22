@@ -1,5 +1,5 @@
 import { Get, Injectable, NotFoundException } from '@nestjs/common';
-import { MoreThan, Repository } from 'typeorm';
+import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsModel } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -41,10 +41,15 @@ export class PostsService {
 
   // 오름차 순으로 정렬하는 페이지네이션만 구현한다.
   async paginatePosts(dto: PaginatePostDto) {
+    const where: FindOptionsWhere<PostsModel> = {};
+    if (dto.where__id_less_than) {
+      where.id = LessThan(dto.where__id_less_than);
+    } else if (dto.where__id_more_than) {
+      where.id = MoreThan(dto.where__id_more_than);
+    }
+    // 1, 2, 3, 4, 5
     const posts = await this.postsRepository.find({
-      where: {
-        id: MoreThan(dto.where__id_more_than ?? 0),
-      },
+      where,
       // order__createdAt
       order: {
         createdAt: dto.order__createdAt,
@@ -98,7 +103,7 @@ export class PostsService {
         after: lastItem?.id ?? null,
       },
       count: posts.length,
-      next: nextUrl?.toString(),
+      next: nextUrl?.toString() ?? null,
     };
   }
 
