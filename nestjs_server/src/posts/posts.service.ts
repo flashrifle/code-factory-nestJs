@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Get, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsModel } from './entities/post.entity';
@@ -25,6 +25,9 @@ export class PostsService {
       relations: ['author'],
     });
   }
+
+  @Get()
+  async paginatePosts() {}
 
   async getPostById(id: number) {
     const post = await this.postsRepository.findOne({ where: { id }, relations: ['author'] });
