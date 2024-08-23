@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BasePaginationDto } from './dto/base-pagination.dto';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 import { BaseModel } from './entity/base.entity';
 
 @Injectable()
@@ -66,6 +66,32 @@ export class CommonService {
               ['where', 'id']
       4. order의 경우 3-2와 같이 적용한다.
      */
-    return;
+    let where: FindOptionsWhere<T> = {};
+    let order: FindOptionsOrder<T> = {};
+
+    for (const [key, value] of Object.entries(dto)) {
+      // key -> where__id__less_than
+
+      if (key.startsWith('where__')) {
+        where = {
+          ...where,
+          ...this.parseWhereFilter(key, value),
+        };
+      } else if (key.startsWith('order__')) {
+        order = {
+          ...order,
+          ...this.parseOrderFilter(key, value),
+        };
+      }
+    }
+    return {
+      where,
+      order,
+      take: dto.take,
+      skip: dto.page ? dto.take * (dto.page - 1) : null,
+    };
   }
+
+  private parseWhereFilter<T extends BaseModel>(key: string, value: any): FindOptionsWhere<T> {}
+  private parseOrderFilter<T extends BaseModel>(key: string, value: any): FindOptionsOrder<T> {}
 }
