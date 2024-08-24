@@ -3,14 +3,13 @@ import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModel } from './entities/post.entity';
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../users/users.service';
-import { JwtModule } from '@nestjs/jwt';
-import { UsersModel } from '../users/entities/users.entity';
+import { CommonModule } from '../common/common.module';
+import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [JwtModule.register({}), TypeOrmModule.forFeature([PostsModel, UsersModel])],
+  imports: [TypeOrmModule.forFeature([PostsModel]), CommonModule, AuthModule, UsersModule],
   controllers: [PostsController],
-  providers: [PostsService, AuthService, UsersService],
+  providers: [PostsService],
 })
 export class PostsModule {}
