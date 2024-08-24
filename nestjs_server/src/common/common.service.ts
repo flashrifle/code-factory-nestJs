@@ -36,6 +36,7 @@ export class CommonService {
 
     where__title__ilike
      */
+    const findOptions = this.composeFindOptions<T>(dto);
   }
 
   private composeFindOptions<T extends BaseModel>(dto: BasePaginationDto): FindManyOptions<T> {
@@ -81,7 +82,7 @@ export class CommonService {
       } else if (key.startsWith('order__')) {
         order = {
           ...order,
-          ...this.parseOrderFilter(key, value),
+          ...this.parseWhereFilter(key, value),
         };
       }
     }
@@ -93,7 +94,7 @@ export class CommonService {
     };
   }
 
-  private parseWhereFilter<T extends BaseModel>(key: string, value: any): FindOptionsWhere<T> {
+  private parseWhereFilter<T extends BaseModel>(key: string, value: any): FindOptionsWhere<T> | FindOptionsOrder<T> {
     const options: FindOptionsWhere<T> = {};
     /*
       ex) where__id__more_than
@@ -147,16 +148,12 @@ export class CommonService {
       // operator -> more_than
       // FILTER_MAPPER[operator] -> MoreThan
       // if(operator === 'between') {
-      //
+      //  options[field] = FILTER_MAPPER[operator](values[0], values[1])
       // } else {
-      //
-      // options[field] = FILTER_MAPPER[operator](value)
+      //  options[field] = FILTER_MAPPER[operator](value)
       // }
       options[field] = FILTER_MAPPER[operator](value);
     }
     return options;
-  }
-  private parseOrderFilter<T extends BaseModel>(key: string, value: any): FindOptionsOrder<T> {
-    return;
   }
 }
