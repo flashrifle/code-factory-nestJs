@@ -16,12 +16,12 @@ export class PostsModel extends BaseModel {
   @IsString({
     message: stringValidationMessage,
   })
-  @IsString({
-    message: stringValidationMessage,
-  })
   @Column()
   title: string;
 
+  @IsString({
+    message: stringValidationMessage,
+  })
   @Column()
   content: string;
 

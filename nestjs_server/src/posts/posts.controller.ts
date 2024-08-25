@@ -13,6 +13,9 @@ import {
   Request,
   Patch,
   Query,
+  UseInterceptors,
+  UploadedFiles,
+  UploadedFile,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
@@ -20,6 +23,7 @@ import { UsersModel } from '../users/entities/users.entity';
 import { User } from '../users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('posts')
 export class PostsController {
@@ -49,8 +53,9 @@ export class PostsController {
   // DTO - Data Transfer Object
   @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
-    return this.postsService.createPost(userId, body);
+  @UseInterceptors(FileInterceptor('image'))
+  postPost(@User('id') userId: number, @Body() body: CreatePostDto, @UploadedFile() file?: Express.Multer.File) {
+    return this.postsService.createPost(userId, body, file?.filename);
   }
 
   // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
