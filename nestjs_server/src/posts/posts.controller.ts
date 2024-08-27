@@ -53,7 +53,8 @@ export class PostsController {
   // DTO - Data Transfer Object
   @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
+  async postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
+    await this.postsService.createPostImage(body);
     return this.postsService.createPost(userId, body);
   }
 
