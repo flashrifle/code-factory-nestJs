@@ -53,9 +53,8 @@ export class PostsController {
   // DTO - Data Transfer Object
   @Post()
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('image'))
-  postPost(@User('id') userId: number, @Body() body: CreatePostDto, @UploadedFile() file?: Express.Multer.File) {
-    return this.postsService.createPost(userId, body, file?.filename);
+  postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
+    return this.postsService.createPost(userId, body);
   }
 
   // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
