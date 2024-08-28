@@ -162,36 +162,6 @@ export class PostsService {
     }
   }
 
-  async createPostImage(dto: CreatePostImageDto) {
-    // dto의 이미지 이름을 기반으로 파일의 경로를 생선한다.
-    const tempFilePath = join(TEMP_FOLDER_PATH, dto.path);
-
-    try {
-      // 파일이 존재하는지 확인
-      // 만약 존재하지 않으면 에러르 ㄹ던짐
-      await promises.access(tempFilePath);
-    } catch (err) {
-      throw new BadRequestException('존재하지 않는 파일입니다.');
-    }
-    //파일의 이름만 가져오기
-    // /Users/aaa/bbb/ccc/asdf.jpg => asdf.jpg
-    const fileName = basename(tempFilePath);
-
-    // 새로 이동할 포스트 폴더의 경로 + 이미지 이름
-    // 프로직트경로/public/posts/asdf.jpg
-    const newPath = join(POST_IMAGE_PATH, fileName);
-
-    // save
-    const result = await this.imageRepository.save({
-      ...dto,
-    });
-
-    // 파일 옮기기
-    await promises.rename(tempFilePath, newPath);
-
-    return result;
-  }
-
   getRepository(qr?: QueryRunner) {
     return qr ? qr.manager.getRepository<PostsModel>(PostsModel) : this.postsRepository;
   }
