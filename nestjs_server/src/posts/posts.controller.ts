@@ -50,7 +50,21 @@ export class PostsController {
   }
 
   // 3) POST /posts 게시물을 생성
-  // DTO - Data Transfer Object
+  /*
+  DTO - Data Transfer Object
+  A Model, B Model
+  Post API -> A 모델을 저장하고, B 모델을 저장한다.
+  await repository.save(a);
+  await repository.save(b);
+
+  만약에 a를 저장하다 실패하면 b를 저장하면 안될 경우
+  all or nothing. - transaction.
+
+  transaction
+  start -> 시작
+  commit -> 저장
+  rollback -> 원상 복구
+   */
   @Post()
   @UseGuards(AccessTokenGuard)
   async postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
