@@ -19,9 +19,11 @@ import { User } from '../users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ImageModelType } from '../common/entity/image.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner as QR } from 'typeorm';
 import { PostsImagesService } from './image/images.service';
 import { LogInterceptor } from '../common/interceptor/log.interceptor';
+import { TransactionInterceptor } from '../common/interceptor/transaction.interceptor';
+import { QueryRunner } from '../common/decorator/query-runner.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -70,20 +72,24 @@ export class PostsController {
    */
   @Post()
   @UseGuards(AccessTokenGuard)
-  async postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
+  @UseInterceptors(TransactionInterceptor)
+  async postPost(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
     // 로직 실행
     const post = await this.postsService.createPost(userId, body, qr);
 
     for (let i = 0; i < body.images.length; i++) {
-      await this.postsImagesService.createPostImage({
-        post,
-        order: i,
-        path: body.images[i],
-        type: ImageModelType.POST_IMAGE,
-      });
+      await this.postsImagesService.createPostImage(
+        {
+          post,
+          order: i,
+          path: body.images[i],
+          type: ImageModelType.POST_IMAGE,
+        },
+        qr,
+      );
     }
 
-    return this.postsService.getPostById(post.id);
+    return this.postsService.getPostById(post.id, qr);
   }
 
   // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
