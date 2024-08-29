@@ -71,43 +71,19 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   async postPost(@User('id') userId: number, @Body() body: CreatePostDto) {
-    // 트랜젝션과 관련된 모든 쿼리를 담당한 쿼리 러너를 생성
-    const qr = this.dataSource.createQueryRunner();
-
-    // 쿼리 러너에 연결한다
-    await qr.connect();
-    // 쿼리 러너에서 트랜잭션을 시작한다
-    // 이 시점부터 같은 쿼리 러너를 사용하면
-    // 트랜잭션 안에서 데이터베이스 액션을 실행할 수 있다.
-    await qr.startTransaction();
-
     // 로직 실행
-    try {
-      const post = await this.postsService.createPost(userId, body, qr);
+    const post = await this.postsService.createPost(userId, body, qr);
 
-      for (let i = 0; i < body.images.length; i++) {
-        await this.postsImagesService.createPostImage(
-          {
-            post,
-            order: i,
-            path: body.images[i],
-            type: ImageModelType.POST_IMAGE,
-          },
-          qr,
-        );
-      }
-
-      await qr.commitTransaction();
-      await qr.release();
-
-      return this.postsService.getPostById(post.id);
-    } catch (e) {
-      // 어떤 에러든 에러가 던져지면 트랜잭션을 종료하고 원래 상태로 되돌린다
-      await qr.rollbackTransaction();
-      await qr.release();
-
-      throw new InternalServerErrorException(e, '에러가 났습니다.');
+    for (let i = 0; i < body.images.length; i++) {
+      await this.postsImagesService.createPostImage({
+        post,
+        order: i,
+        path: body.images[i],
+        type: ImageModelType.POST_IMAGE,
+      });
     }
+
+    return this.postsService.getPostById(post.id);
   }
 
   // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
