@@ -17,6 +17,8 @@ import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common'
 import { SocketCatchHttpExceptionFilter } from '../common/exception-filter/socket-catch-http.exception-filter';
 import { SocketBearerTokenGuard } from '../auth/guard/socket/socket-bearer-token.guard';
 import { UsersModel } from '../users/entities/users.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
 
 @WebSocketGateway({
   // ws://localhost:3000/chats
@@ -26,13 +28,37 @@ export class ChatGateway implements OnGatewayConnection {
   constructor(
     private readonly chatsService: ChatsService,
     private readonly chatMessagesService: ChatMessagesService,
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
   ) {}
 
   @WebSocketServer()
   server: Server;
 
-  handleConnection(socket: Socket) {
+  async handleConnection(socket: Socket & { user: UsersModel }) {
     console.log(`on connect called : ${socket.id}`);
+
+    const headers = socket.handshake.headers;
+
+    // Bearer xxxxxx
+    const rawToken = headers['authorization'];
+
+    if (!rawToken) {
+      socket.disconnect();
+    }
+
+    try {
+      const token = this.authService.extractTokenFromHeader(rawToken, true);
+
+      const payload = this.authService.verifyToken(token);
+      const user = await this.usersService.getUserByEmail(payload.email);
+
+      socket.user = user;
+
+      return true;
+    } catch (err) {
+      socket.disconnect();
+    }
   }
 
   @UsePipes(
@@ -46,7 +72,6 @@ export class ChatGateway implements OnGatewayConnection {
     }),
   )
   @UseFilters(SocketCatchHttpExceptionFilter)
-  @UseGuards(SocketBearerTokenGuard)
   @SubscribeMessage('create_chat')
   async createChat(@MessageBody() data: CreateChatDto, @ConnectedSocket() socket: Socket & { user: UsersModel }) {
     const chat = await this.chatsService.createChat(data);
@@ -67,7 +92,7 @@ export class ChatGateway implements OnGatewayConnection {
   async enterChat(
     // 방의 chat ID를 리스트로 받는다.
     @MessageBody() data: EnterChatDto,
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: Socket & { user: UsersModel },
   ) {
     for (const chatId of data.chatIds) {
       const exists = await this.chatsService.checkIfChatExists(chatId);
