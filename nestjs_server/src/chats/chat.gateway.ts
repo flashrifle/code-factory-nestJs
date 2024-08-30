@@ -11,13 +11,18 @@ import { Server, Socket } from 'socket.io';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { EnterChatDto } from './dto/enter-chat.dto';
+import { CreateMessageDto } from './messages/dto/create-message.dto';
+import { ChatMessagesService } from './messages/messages.service';
 
 @WebSocketGateway({
   // ws://localhost:3000/chats
   namespace: 'chats',
 })
 export class ChatGateway implements OnGatewayConnection {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly chatMessagesService: ChatMessagesService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -52,8 +57,14 @@ export class ChatGateway implements OnGatewayConnection {
 
   // socket.on('send_msg', (msg) => {console.log(msg)};
   @SubscribeMessage('send_message')
-  sendMessage(@MessageBody() message: { message: string; chatId: string }, @ConnectedSocket() socket: Socket) {
+  async sendMessage(@MessageBody() dto: CreateMessageDto, @ConnectedSocket() socket: Socket) {
+    const chatExists = await this.chatsService.checkIfChatExists(dto.chatId);
+    if (!chatExists) {
+      throw new WsException(`존재하지 않는 채팅방 입니다. Chat ID: ${dto.chatId}`);
+    }
+    const message = await this.chatMessagesService.createMessage(dto);
+
+    socket.to(message.chat.id.toString()).emit('receive_message', message.message);
     // this.server.in(message.chatId.toString()).emit('receive_message', message.message);
-    socket.to(message.chatId.toString()).emit('receive_message', message.message);
   }
 }
