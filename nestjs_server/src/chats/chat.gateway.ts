@@ -35,6 +35,7 @@ export class ChatGateway implements OnGatewayConnection {
   // socket.on('send_msg', (msg) => {console.log(msg)};
   @SubscribeMessage('send_message')
   sendMessage(@MessageBody() message: { message: string; chatId: string }, @ConnectedSocket() socket: Socket) {
-    this.server.in(message.chatId.toString()).emit('receive_message', message.message);
+    // this.server.in(message.chatId.toString()).emit('receive_message', message.message);
+    socket.to(message.chatId.toString()).emit('receive_message', message.message);
   }
 }
