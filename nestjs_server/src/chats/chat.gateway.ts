@@ -52,6 +52,17 @@ export class ChatGateway implements OnGatewayConnection {
     const chat = await this.chatsService.createChat(data);
   }
 
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  @UseFilters(SocketCatchHttpExceptionFilter)
   @SubscribeMessage('enter_chat')
   async enterChat(
     // 방의 chat ID를 리스트로 받는다.
@@ -71,14 +82,25 @@ export class ChatGateway implements OnGatewayConnection {
     socket.join(data.chatIds.map((x) => x.toString()));
   }
 
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  @UseFilters(SocketCatchHttpExceptionFilter)
   // socket.on('send_msg', (msg) => {console.log(msg)};
   @SubscribeMessage('send_message')
-  async sendMessage(@MessageBody() dto: CreateMessageDto, @ConnectedSocket() socket: Socket) {
+  async sendMessage(@MessageBody() dto: CreateMessageDto, @ConnectedSocket() socket: Socket & { user: UsersModel }) {
     const chatExists = await this.chatsService.checkIfChatExists(dto.chatId);
     if (!chatExists) {
       throw new WsException(`존재하지 않는 채팅방 입니다. Chat ID: ${dto.chatId}`);
     }
-    const message = await this.chatMessagesService.createMessage(dto);
+    const message = await this.chatMessagesService.createMessage(dto, socket.user.id);
 
     socket.to(message.chat.id.toString()).emit('receive_message', message.message);
     // this.server.in(message.chatId.toString()).emit('receive_message', message.message);
