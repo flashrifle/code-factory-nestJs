@@ -15,7 +15,7 @@ import { ChatsService } from './chats.service';
   namespace: 'chats',
 })
 export class ChatGateway implements OnGatewayConnection {
-  constructor(private readonly chatService: ChatsService) {}
+  constructor(private readonly chatsService: ChatsService) {}
 
   @WebSocketServer()
   server: Server;
@@ -26,7 +26,7 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('create_chat')
   async createChat(@MessageBody() data: CreateChatDto, @ConnectedSocket() socket: Socket) {
-    const chat = await this.chatService.createChat(data);
+    const chat = await this.chatsService.createChat(data);
   }
 
   @SubscribeMessage('enter_chat')
