@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 import { PostsModel } from '../../posts/entities/post.entity';
 import { BaseModel } from '../../common/entity/base.entity';
@@ -7,6 +16,7 @@ import { lengthValidationMessage } from '../../common/validation-message/length-
 import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
 import { emailValidationMessage } from '../../common/validation-message/email-validation.message';
 import { Exclude, Expose } from 'class-transformer';
+import { ChatsModel } from '../../chats/entity/chats.entity';
 
 @Entity()
 @Exclude()
@@ -69,4 +79,8 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => PostsModel, (post) => post.author)
   posts: PostsModel[];
+
+  @ManyToMany(() => ChatsModel, (chat) => chat.users)
+  @JoinTable()
+  chats: ChatsModel[];
 }
