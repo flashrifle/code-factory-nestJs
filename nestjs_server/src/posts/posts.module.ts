@@ -14,5 +14,6 @@ import { CommentsModule } from './comments/comments.module';
   imports: [TypeOrmModule.forFeature([PostsModel, ImageModel]), CommonModule, AuthModule, UsersModule],
   controllers: [PostsController],
   providers: [PostsService, PostsImagesService],
+  exports: [PostsService],
 })
 export class PostsModule {}
