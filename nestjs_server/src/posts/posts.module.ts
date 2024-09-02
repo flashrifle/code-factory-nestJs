@@ -8,6 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { ImageModel } from '../common/entity/image.entity';
 import { PostsImagesService } from './image/images.service';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostsModel, ImageModel]), CommonModule, AuthModule, UsersModule],
