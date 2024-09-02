@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { DEFAULT_POST_FIND_OPTIONS } from '../const/default-post-find-options.const';
 import { CommonService } from '../../common/common.service';
 import { PaginateCommentsDto } from './dto/paginate-comments.dto';
+import { CreateCommentsDto } from './dto/create-comments.dto';
+import { UsersModel } from '../../users/entity/users.entity';
+import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/deault-comment-find-options.const';
 
 @Injectable()
 export class CommentsService {
@@ -19,6 +22,7 @@ export class CommentsService {
       dto,
       this.commentsRepository,
       {
+        ...DEFAULT_COMMENT_FIND_OPTIONS,
         where: {
           post: {
             id: postId,
@@ -31,6 +35,7 @@ export class CommentsService {
 
   async getCommentById(id: number) {
     const comment = await this.commentsRepository.findOne({
+      ...DEFAULT_COMMENT_FIND_OPTIONS,
       where: { id },
     });
 
@@ -39,5 +44,15 @@ export class CommentsService {
     }
 
     return comment;
+  }
+
+  async createComment(dto: CreateCommentsDto, postId: number, author: UsersModel) {
+    return this.commentsRepository.save({
+      ...dto,
+      post: {
+        id: postId,
+      },
+      author,
+    });
   }
 }
