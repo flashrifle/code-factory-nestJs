@@ -1,10 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { CommentsService } from './comments.service';
+import { PaginateCommentsDto } from './dto/paginate-comments.dto';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {
-    /*
+  constructor(private readonly commentsService: CommentsService) {}
+
+  /*
     1. entity 생성
     author -> 작성자
     post -> 귀속되는 포스트
@@ -21,5 +23,9 @@ export class CommentsController {
     5. PATCH(':commentId') 특정 comment 업데이트 하는 기능
     6. DELETE(':commentId') 특정 코맨트만 삭제하는 기능
      */
+
+  @Get()
+  async getComments(@Param('postId', ParseIntPipe) postId: number, @Query() query: PaginateCommentsDto) {
+    await this.commentsService.paginateComments(query, postId);
   }
 }
