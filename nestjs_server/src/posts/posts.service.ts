@@ -217,4 +217,10 @@ export class PostsService {
 
     return deletePost;
   }
+
+  async checkPostExistsById(id: number) {
+    return this.postsRepository.exists({
+      where: { id },
+    });
+  }
 }
