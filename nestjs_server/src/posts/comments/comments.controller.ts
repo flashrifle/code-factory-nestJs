@@ -28,4 +28,9 @@ export class CommentsController {
   async getComments(@Param('postId', ParseIntPipe) postId: number, @Query() query: PaginateCommentsDto) {
     await this.commentsService.paginateComments(query, postId);
   }
+
+  @Get(':commentId')
+  getComment(@Param('commentId', ParseIntPipe) commentId: number) {
+    return this.commentsService.getCommentById(commentId);
+  }
 }
