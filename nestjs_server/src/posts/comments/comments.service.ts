@@ -58,6 +58,13 @@ export class CommentsService {
   }
 
   async updateComment(dto: UpdateCommentDto, commentId: number) {
+    const comment = await this.commentsRepository.findOne({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      throw new BadRequestException(`존재하지 않는 댓글입니다.`);
+    }
     const prevComment = await this.commentsRepository.preload({
       id: commentId,
       ...dto,
@@ -66,5 +73,17 @@ export class CommentsService {
     const newComment = await this.commentsRepository.save(prevComment);
 
     return newComment;
+  }
+
+  async deleteComment(id: number) {
+    const comment = await this.commentsRepository.findOne({
+      where: { id },
+    });
+
+    if (!comment) {
+      throw new BadRequestException(`존재하지 않는 댓글입니다.`);
+    }
+
+    return this.commentsRepository.delete(id);
   }
 }
