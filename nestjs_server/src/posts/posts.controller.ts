@@ -56,7 +56,6 @@ export class PostsController {
   }
 
   @Post('random')
-  @UseGuards(AccessTokenGuard)
   async postPostRandom(@User() user: UsersModel) {
     await this.postsService.generatePost(user.id);
     return true;
@@ -79,7 +78,6 @@ export class PostsController {
   rollback -> 원상 복구
    */
   @Post()
-  @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async postPost(@User('id') userId: number, @Body() body: CreatePostDto, @QueryRunner() qr: QR) {
     // 로직 실행

@@ -1,5 +1,7 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Roles } from './decorator/roles.decorator';
+import { RolesEnum } from './const/roles.const';
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +13,7 @@ export class UsersController {
   // }
 
   @Get()
+  @Roles(RolesEnum.ADMIN)
   @UseInterceptors(ClassSerializerInterceptor)
   /*
   serialization -> 직렬화 -> 현재 시스템에서 사용되는 데이터의 구조를 다른 시스템에서도
