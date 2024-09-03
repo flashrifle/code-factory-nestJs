@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentsModel } from './entity/comments.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { DEFAULT_POST_FIND_OPTIONS } from '../const/default-post-find-options.const';
 import { CommonService } from '../../common/common.service';
 import { PaginateCommentsDto } from './dto/paginate-comments.dto';
@@ -17,6 +17,10 @@ export class CommentsService {
     private readonly commentsRepository: Repository<CommentsModel>,
     private readonly commonService: CommonService,
   ) {}
+
+  getRepository(qr?: QueryRunner) {
+    return qr ? qr.manager.getRepository<CommentsModel>(CommentsModel) : this.commentsRepository;
+  }
 
   paginateComments(dto: PaginateCommentsDto, postId: number) {
     return this.commonService.paginate(
@@ -47,8 +51,9 @@ export class CommentsService {
     return comment;
   }
 
-  async createComment(dto: CreateCommentsDto, postId: number, author: UsersModel) {
-    return this.commentsRepository.save({
+  async createComment(dto: CreateCommentsDto, postId: number, author: UsersModel, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+    return repository.save({
       ...dto,
       post: {
         id: postId,
@@ -75,8 +80,9 @@ export class CommentsService {
     return newComment;
   }
 
-  async deleteComment(id: number) {
-    const comment = await this.commentsRepository.findOne({
+  async deleteComment(id: number, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+    const comment = await repository.findOne({
       where: { id },
     });
 
@@ -84,7 +90,7 @@ export class CommentsService {
       throw new BadRequestException(`존재하지 않는 댓글입니다.`);
     }
 
-    return this.commentsRepository.delete(id);
+    return repository.delete(id);
   }
 
   async isCommentMine(userId: number, commentId: number) {
