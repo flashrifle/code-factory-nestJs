@@ -29,6 +29,7 @@ import { QueryRunner } from '../common/decorator/query-runner.decorator';
 import { HttpExceptionFilter } from '../common/exception-filter/http.exception-filter';
 import { RolesEnum } from '../users/const/roles.const';
 import { Roles } from '../users/decorator/roles.decorator';
+import { IsPublic } from '../common/decorator/is-public.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -40,6 +41,7 @@ export class PostsController {
 
   // 1) GET /posts 모든 게시물을 가져온다
   @Get()
+  @IsPublic()
   // @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
@@ -48,6 +50,7 @@ export class PostsController {
   // 2) GET /posts/:id
   // id에 해당하는 게시물을 가져온다
   @Get(':id')
+  @IsPublic()
   getPost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.getPostById(id);
   }
@@ -105,7 +108,6 @@ export class PostsController {
 
   // 5) DELETE /posts/:id id에 해당하는 개시물을 삭제
   @Delete(':id')
-  @UseGuards(AccessTokenGuard)
   @Roles(RolesEnum.ADMIN)
   deletePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);

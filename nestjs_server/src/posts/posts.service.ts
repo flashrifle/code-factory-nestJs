@@ -215,7 +215,7 @@ export class PostsService {
 
     const deletePost = await this.postsRepository.delete(postId);
 
-    return deletePost;
+    return postId;
   }
 
   async checkPostExistsById(id: number) {
