@@ -7,6 +7,7 @@ import { User } from '../../users/decorator/user.decorator';
 import { UsersModel } from '../../users/entity/users.entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { IsPublic } from '../../common/decorator/is-public.decorator';
+import { IsCommentMineOrGuard } from './guard/is-comment-mine-or-guard';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -52,11 +53,13 @@ export class CommentsController {
   }
 
   @Patch(':commentId')
+  @UseGuards(IsCommentMineOrGuard)
   async patchComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body: UpdateCommentDto) {
     return this.commentsService.updateComment(body, commentId);
   }
 
   @Delete(':commentId')
+  @UseGuards(IsCommentMineOrGuard)
   async deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
     return this.commentsService.deleteComment(commentId);
   }
