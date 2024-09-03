@@ -1,11 +1,18 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RolesEnum } from '../../users/const/roles.const';
 import { PostsService } from '../posts.service';
 import { Request } from 'express';
 import { UsersModel } from '../../users/entity/users.entity';
 
 @Injectable()
-export class IsPostMineRoAdminGuard implements CanActivate {
+export class IsPostMineOrAdminGuard implements CanActivate {
   constructor(private readonly postsService: PostsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -26,6 +33,12 @@ export class IsPostMineRoAdminGuard implements CanActivate {
     if (!postId) {
       throw new BadRequestException(`Post ID 가 파라미터로 제공되어야 합니다.`);
     }
-    return this.postsService.isPostMine(user.id, parseInt(postId));
+    const isOk = await this.postsService.isPostMine(user.id, parseInt(postId));
+
+    if (!isOk) {
+      throw new ForbiddenException(`권한이 없습니다.`);
+    }
+
+    return true;
   }
 }

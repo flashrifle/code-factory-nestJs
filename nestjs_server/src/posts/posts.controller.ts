@@ -30,6 +30,8 @@ import { HttpExceptionFilter } from '../common/exception-filter/http.exception-f
 import { RolesEnum } from '../users/const/roles.const';
 import { Roles } from '../users/decorator/roles.decorator';
 import { IsPublic } from '../common/decorator/is-public.decorator';
+import { IsPostMineOrAdminGuard } from './guard/is-post-mine-or-admin.guard';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -99,8 +101,9 @@ export class PostsController {
   }
 
   // 4) Patch /posts/:id id에 해당하는 개시물을 변경한다
-  @Patch(':id')
-  patchPost(@Param('id', ParseIntPipe) id: number, @Body() body: CreatePostDto) {
+  @Patch(':postId')
+  @UseGuards(IsPostMineOrAdminGuard)
+  patchPost(@Param('postId', ParseIntPipe) id: number, @Body() body: UpdatePostDto) {
     return this.postsService.updatePost(id, body);
   }
 
