@@ -27,6 +27,8 @@ import { LogInterceptor } from '../common/interceptor/log.interceptor';
 import { TransactionInterceptor } from '../common/interceptor/transaction.interceptor';
 import { QueryRunner } from '../common/decorator/query-runner.decorator';
 import { HttpExceptionFilter } from '../common/exception-filter/http.exception-filter';
+import { RolesEnum } from '../users/const/roles.const';
+import { Roles } from '../users/decorator/roles.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -103,7 +105,11 @@ export class PostsController {
 
   // 5) DELETE /posts/:id id에 해당하는 개시물을 삭제
   @Delete(':id')
+  @UseGuards(AccessTokenGuard)
+  @Roles(RolesEnum.ADMIN)
   deletePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);
   }
+
+  // RBAC -> Role Based Access Control
 }
